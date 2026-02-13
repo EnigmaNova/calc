@@ -11,4 +11,7 @@ public class Calculator {
         return a * b;
     }
 
+    public int stepen(int a){
+        return a * a;
+    }
 }

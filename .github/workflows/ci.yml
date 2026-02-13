@@ -21,7 +21,7 @@ jobs:
     
     - name: Compile Calculator
       run: |
-        find src/main/java -name "*.java" > sources.txt
+        find src/ -name "*.java" > sources.txt
         javac -d out @sources.txt
       working-directory: .
     

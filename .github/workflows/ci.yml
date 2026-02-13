@@ -1,0 +1,35 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ dev, stage, main ]
+  pull_request:
+    branches: [ dev, stage, main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Compile Calculator
+      run: |
+        find src/main/java -name "*.java" > sources.txt
+        javac -d out @sources.txt
+      working-directory: .
+    
+    - name: Check compilation status
+      run: |
+        if [ -d "out" ]; then
+          echo "✅ Compilation successful"
+        else
+          echo "❌ Compilation failed"
+          exit 1
+        fi

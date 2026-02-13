@@ -10,4 +10,5 @@ public class Calculator {
     public int multy(int a, int b){
         return a * b;
     }
+
 }

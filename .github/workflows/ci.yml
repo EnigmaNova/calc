@@ -13,22 +13,44 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: Set up JDK 11
+    - name: Set up JDK 20
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '20'
         distribution: 'temurin'
+    
+    - name: Show project structure
+      run: |
+        echo "📁 Current directory:"
+        pwd
+        ls -la
+        echo "📂 Looking for Java files:"
+        find . -name "*.java" -type f | sort
     
     - name: Compile Calculator
       run: |
-        find src/ -name "*.java" > sources.txt
+        # Ищем Java файлы где угодно (не только в src/)
+        find . -name "*.java" -type f > sources.txt
+        
+        # Проверяем, что нашли
+        if [ ! -s sources.txt ]; then
+          echo "❌ No Java files found in the entire repository!"
+          exit 1
+        fi
+        
+        echo "📋 Found Java files:"
+        cat sources.txt
+        
+        # Создаем папку для скомпилированных классов
+        mkdir -p out
+        
+        # Компилируем все найденные файлы
         javac -d out @sources.txt
-      working-directory: .
-    
-    - name: Check compilation status
-      run: |
-        if [ -d "out" ]; then
-          echo "✅ Compilation successful"
+        
+        if [ $? -eq 0 ]; then
+          echo "✅ Compilation successful!"
+          echo "📦 Compiled classes:"
+          find out -name "*.class" | sed 's|out/||'
         else
           echo "❌ Compilation failed"
           exit 1

@@ -21,45 +21,37 @@ jobs:
     
     - name: Show project structure
       run: |
-        echo "📁 Project structure:"
+        echo "📁 Current directory:"
+        pwd
         ls -la
-        echo "📂 Src folder:"
-        ls -la src/ || echo "src folder not found"
+        echo "📂 Looking for Java files:"
+        find . -name "*.java" -type f | sort
     
     - name: Compile Calculator
       run: |
-        # Находим все Java файлы в src
-        find src -name "*.java" > sources.txt
+        # Ищем Java файлы где угодно (не только в src/)
+        find . -name "*.java" -type f > sources.txt
         
-        # Проверяем, что файлы найдены
+        # Проверяем, что нашли
         if [ ! -s sources.txt ]; then
-          echo "❌ No Java files found in src/"
+          echo "❌ No Java files found in the entire repository!"
           exit 1
         fi
         
-        echo "📋 Compiling:"
+        echo "📋 Found Java files:"
         cat sources.txt
         
         # Создаем папку для скомпилированных классов
         mkdir -p out
         
-        # Компилируем
+        # Компилируем все найденные файлы
         javac -d out @sources.txt
         
-        # Проверяем результат
         if [ $? -eq 0 ]; then
           echo "✅ Compilation successful!"
           echo "📦 Compiled classes:"
-          find out -name "*.class" | sed 's/out\///'
+          find out -name "*.class" | sed 's|out/||'
         else
           echo "❌ Compilation failed"
           exit 1
-        fi
-    
-    - name: Verify Calculator class
-      run: |
-        if [ -f "out/Calculator.class" ]; then
-          echo "✅ Calculator.class created"
-        else
-          echo "⚠️ Calculator.class not found, but other classes may exist"
         fi
